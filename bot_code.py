@@ -1,7 +1,7 @@
 ADRESS_BOOK = dict()
 
 
-def format_phone_number(func: function) -> str:
+def format_phone_number(func) -> str:
     def inner(phone):
         phone = func(phone)
         return ('+' if len(phone) == 12 else '+38')+phone
@@ -9,11 +9,11 @@ def format_phone_number(func: function) -> str:
     return inner
 
 
-def get_handler(operator: str) -> function:
+def get_handler(operator: str):
     return OPERATIONS[operator]
 
 
-def input_error(func: function) -> str:
+def input_error(func) -> str:
     """for error in user input
     """
     def inner(*args, **kwargs):
