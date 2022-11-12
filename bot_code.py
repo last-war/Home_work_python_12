@@ -65,40 +65,12 @@ def parser(user_in: str) -> list:
     Returns:
         list: 0 - command to while 1 - text for print
     """
-    # разобрать ввод вернуть 0-дествие 1-text
-    if user_in == '.':
-        return ['break']
-
-    elif user_in in ['good bye', 'close', 'exit']:
-        return ['break', 'Good bye!']
-
-    elif user_in == 'hello':
-        return ['', 'How can I help you?']
-
-    elif user_in[0:5] == 'phone':
-        result = user_in.split(' ')
-        if len(result) < 2:
-            return ['', 'you need use \' \' to separate']
-        return ['', get_handler('phone')(result[1])]
-
-    elif user_in[0:6] == 'change':
-        result = user_in.split(' ')
-        if len(result) < 3:
-            return ['', 'you need use \' \' to separate']
-        return ['', get_handler('change')(result[1], result[2])]
-
-    elif user_in[0:3] == 'add':
-        result = user_in.split(' ')
-        if len(result) < 3:
-            return ['', 'you need use \' \' to separate']
-        return ['', get_handler('add')(result[1], result[2])]
-
-    elif user_in == 'show all':
-        if len(ADRESS_BOOK):
-            return ['print', 'end of adress book']
-        else:
-            return ['print', 'adress book is empty']
-    else:
+    unk_com = True
+    for iter in OPERATIONS.keys():
+        if user_in.startswith(iter):
+            unk_com = False
+            return get_handler(iter)(user_in)
+    if unk_com:
         return ['', 'I don\'t undestand you']
 
 
@@ -115,32 +87,61 @@ def sanitize_phone_number(phone: str) -> str:
 
 
 @input_error
-def todo_add(name: str, phone: str) -> str:
+def todo_add(user_in: str) -> list:
     """add new contact
     """
-    ADRESS_BOOK[name] = sanitize_phone_number(phone)
-    return 'Added'
+    result = user_in.split(' ')
+    if len(result) < 3:
+        return ['', 'you need use \' \' to separate']
+    ADRESS_BOOK[result[1]] = sanitize_phone_number(result[2])
+    return ['', 'Added']
 
 
 @input_error
-def todo_change(name: str, phone: str) -> str:
+def todo_change(user_in: str) -> list:
     """change phone fined by name
     """
-    ADRESS_BOOK[name] = sanitize_phone_number(phone)
-    return 'Changed'
+    result = user_in.split(' ')
+    if len(result) < 3:
+        return ['', 'you need use \' \' to separate']
+    ADRESS_BOOK[result[1]] = sanitize_phone_number(result[2])
+    return ['', 'Changed']
+
+
+def todo_hello(user_in: str) -> list:
+    return ['', 'How can I help you?']
+
+
+def todo_exit(user_in: str) -> list:
+    return ['break', 'Good bye!']
+
+
+def todo_show(user_in: str) -> list:
+    if len(ADRESS_BOOK):
+        return ['print', 'end of adress book']
+    else:
+        return ['print', 'adress book is empty']
 
 
 @input_error
-def todo_phone(name: str) -> str:
+def todo_phone(user_in: str) -> str:
     """find by key
     """
-    return ADRESS_BOOK[name]
+    result = user_in.split(' ')
+    if len(result) < 2:
+        return ['', 'you need use \' \' to separate']
+    return ADRESS_BOOK[result[1]]
 
 
 OPERATIONS = {
     'add': todo_add,
     'change': todo_change,
-    'phone': todo_phone
+    'phone': todo_phone,
+    'hello': todo_hello,
+    'exit': todo_exit,
+    'good bye': todo_exit,
+    'close': todo_exit,
+    'show all': todo_show
 }
 
 if __name__ == '__main__':
