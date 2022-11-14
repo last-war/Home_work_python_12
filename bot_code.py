@@ -1,6 +1,26 @@
 ADRESS_BOOK = dict()
 
 
+class UserDict:
+    pass
+
+class AddressBook(UserDict):
+    pass
+
+class Record:
+    name = ""
+    pass
+
+class Field:
+    pass
+
+class Phone(Field):
+    pass
+
+class Name(Field):
+    pass
+
+
 def format_phone_number(func) -> str:
     def inner(phone):
         phone = func(phone)
