@@ -3,14 +3,6 @@ import user_dict_class as AB
 ADRESS_BOOK = AB.AddressBook()
 
 
-def format_phone_number(func) -> str:
-    def inner(phone):
-        phone = func(phone)
-        return ('+' if len(phone) == 12 else '+38')+phone
-
-    return inner
-
-
 def get_handler(operator: str):
     return OPERATIONS[operator]
 
@@ -44,18 +36,11 @@ def main() -> None:
                 print(result[1])
             break
         elif result[0] == 'print':
-            for iter in ADRESS_BOOK.keys():
-                print(f'{iter}:{ADRESS_BOOK.get(iter)}')
+            for iter in ADRESS_BOOK.data.keys():
+                print(f'{iter}:{ADRESS_BOOK.data.get(iter).show_rec()}')
 
         if len(result) > 1:
             print(result[1])
-
-
-def param_control(user_in, num_param):
-    # don't used
-    result = user_in.split(' ')
-    if len(result) < num_param:
-        return ['', 'you need use \' \' to separate']
 
 
 def parser(user_in: str) -> list:
@@ -76,18 +61,6 @@ def parser(user_in: str) -> list:
         return ['', 'I don\'t undestand you']
 
 
-@format_phone_number
-def sanitize_phone_number(phone: str) -> str:
-    new_phone = (
-        phone.strip().removeprefix("+")
-        .replace("(", "")
-        .replace(")", "")
-        .replace("-", "")
-        .replace(" ", "")
-    )
-    return new_phone
-
-
 @input_error
 def todo_add(user_in: str) -> list:
     """add new contact
@@ -95,18 +68,21 @@ def todo_add(user_in: str) -> list:
     result = user_in.split(' ')
     if len(result) < 3:
         return ['', 'you need use \' \' to separate']
-    ADRESS_BOOK[result[1]] = sanitize_phone_number(result[2])
+    record = AB.Record(result[1])
+    record.phone_add(result[2])
+    ADRESS_BOOK.record_add(record)
     return ['', 'Added']
 
 
 @input_error
 def todo_change(user_in: str) -> list:
+    # TODO
     """change phone fined by name
     """
     result = user_in.split(' ')
     if len(result) < 3:
         return ['', 'you need use \' \' to separate']
-    ADRESS_BOOK[result[1]] = sanitize_phone_number(result[2])
+    ADRESS_BOOK[result[1]] = result[2]
     return ['', 'Changed']
 
 
@@ -119,7 +95,7 @@ def todo_exit(user_in: str) -> list:
 
 
 def todo_show(user_in: str) -> list:
-    if len(ADRESS_BOOK):
+    if len(ADRESS_BOOK.data):
         return ['print', 'end of adress book']
     else:
         return ['print', 'adress book is empty']
@@ -127,6 +103,7 @@ def todo_show(user_in: str) -> list:
 
 @input_error
 def todo_phone(user_in: str) -> str:
+    # TODO
     """find by key
     """
     result = user_in.split(' ')
