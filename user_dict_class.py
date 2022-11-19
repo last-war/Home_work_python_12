@@ -9,7 +9,7 @@ class AddressBook(UserDict):
     def record_add(self, cur_rec):
         old_rec = self.record_find(cur_rec.name.value)
         if old_rec != None:
-            old_rec.phone_add(cur_rec.list_phone[0])
+            old_rec.list_phone.append(cur_rec.list_phone[0])
         else:
             self.data.update({cur_rec.name.value: cur_rec})
 
@@ -17,10 +17,6 @@ class AddressBook(UserDict):
         if key in self.data.keys():
             return self.data.get(key)
         return None
-
-    def record_delete(self, cur_rec):
-
-        pass  # TODO
 
 
 class Record:
@@ -32,17 +28,18 @@ class Record:
     def phone_add(self, clean_phone):
         self.list_phone.append(Phone(clean_phone))
 
-    def phone_change(self):
-        pass  # TODO
+    def phone_change(self, clean_phone):
+        self.list_phone = []
+        self.list_phone.append(Phone(clean_phone))
 
     def phone_delete(self):
-        pass  # TODO
+        self.list_phone = []
 
     def show_rec(self):
         res_str = []
         for iter in self.list_phone:
             res_str.append(iter.value)
-        return res_str
+        return ",".join(res_str)
 
 
 class Field:

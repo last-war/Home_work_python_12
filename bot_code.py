@@ -76,14 +76,32 @@ def todo_add(user_in: str) -> list:
 
 @input_error
 def todo_change(user_in: str) -> list:
-    # TODO
-    """change phone fined by name
+    """change phone finded by name
     """
     result = user_in.split(' ')
     if len(result) < 3:
         return ['', 'you need use \' \' to separate']
-    ADRESS_BOOK[result[1]] = result[2]
+    record = ADRESS_BOOK.record_find(result[1])
+    if record == None:
+        return ['', f'can\'t find rec with name {result[1]}']
+    record.phone_change(result[2])
+
     return ['', 'Changed']
+
+
+@input_error
+def todo_delete(user_in: str) -> list:
+    """delete phone finded by name
+    """
+    result = user_in.split(' ')
+    if len(result) < 2:
+        return ['', 'you need use \' \' to separate']
+    record = ADRESS_BOOK.record_find(result[1])
+    if record == None:
+        return ['', f'can\'t find rec with name {result[1]}']
+    record.phone_delete()
+
+    return ['', 'Deleted']
 
 
 def todo_hello(user_in: str) -> list:
@@ -103,13 +121,12 @@ def todo_show(user_in: str) -> list:
 
 @input_error
 def todo_phone(user_in: str) -> str:
-    # TODO
     """find by key
     """
     result = user_in.split(' ')
     if len(result) < 2:
         return ['', 'you need use \' \' to separate']
-    return ADRESS_BOOK[result[1]]
+    return ['', ADRESS_BOOK.record_find(result[1]).show_rec()]
 
 
 OPERATIONS = {
@@ -120,7 +137,8 @@ OPERATIONS = {
     'exit': todo_exit,
     'good bye': todo_exit,
     'close': todo_exit,
-    'show all': todo_show
+    'show all': todo_show,
+    'delete': todo_delete
 }
 
 if __name__ == '__main__':
