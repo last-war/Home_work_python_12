@@ -53,7 +53,7 @@ def parser(user_in: str) -> str:
 
 
 @input_error
-def todo_add(user_in: str) -> str:
+def cmd_add(user_in: str) -> str:
     """add new contact
     """
     result = user_in.split(' ')
@@ -66,7 +66,7 @@ def todo_add(user_in: str) -> str:
 
 
 @input_error
-def todo_change(user_in: str) -> str:
+def cmd_change(user_in: str) -> str:
     """change phone finded by name
     """
     result = user_in.split(' ')
@@ -82,7 +82,7 @@ def todo_change(user_in: str) -> str:
 
 
 @input_error
-def todo_delete_rec(user_in: str) -> str:
+def cmd_delete_rec(user_in: str) -> str:
     result = user_in.split(' ')
     if len(result) < 3:
         return 'you need use \' \' to separate'
@@ -96,7 +96,7 @@ def todo_delete_rec(user_in: str) -> str:
 
 
 @input_error
-def todo_delete_phone(user_in: str) -> str:
+def cmd_delete_phone(user_in: str) -> str:
     result = user_in.split(' ')
     if len(result) < 4:
         return 'you need use \' \' to separate'
@@ -109,20 +109,20 @@ def todo_delete_phone(user_in: str) -> str:
     return 'deleted phone'
 
 
-def todo_hello(user_in: str) -> str:
+def cmd_hello(user_in: str) -> str:
     return 'How can I help you?'
 
 
-def todo_exit(user_in: str) -> str:
+def cmd_exit(user_in: str) -> str:
     return 'exit'
 
 
-def todo_show(user_in: str) -> str:
+def cmd_show(user_in: str) -> str:
     return ADRESS_BOOK.print_AB()
 
 
 @input_error
-def todo_phone(user_in: str) -> str:
+def cmd_phone(user_in: str) -> str:
     """find by key
     """
     result = user_in.split(' ')
@@ -136,16 +136,16 @@ def todo_phone(user_in: str) -> str:
 
 
 OPERATIONS = {
-    'add': todo_add,
-    'change': todo_change,
-    'phone': todo_phone,
-    'hello': todo_hello,
-    'exit': todo_exit,
-    'good bye': todo_exit,
-    'close': todo_exit,
-    'show all': todo_show,
-    'delete id': todo_delete_rec,
-    'delete phone': todo_delete_phone,
+    'add': cmd_add,
+    'change': cmd_change,
+    'phone': cmd_phone,
+    'hello': cmd_hello,
+    'exit': cmd_exit,
+    'good bye': cmd_exit,
+    'close': cmd_exit,
+    'show all': cmd_show,
+    'delete id': cmd_delete_rec,
+    'delete phone': cmd_delete_phone,
 }
 
 if __name__ == '__main__':
