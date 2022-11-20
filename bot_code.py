@@ -1,6 +1,6 @@
-import user_dict_class as AB
+from user_dict_class import Record, AddressBook
 
-ADRESS_BOOK = AB.AddressBook()
+ADRESS_BOOK = AddressBook()
 
 
 def get_handler(operator: str):
@@ -14,13 +14,13 @@ def input_error(func) -> str:
         try:
             return func(*args, **kwargs)
         except KeyError:
-            return f"{func.__name__} wrong name of contact"
+            return f"wrong name of contact"
         except ValueError:
-            return f"{func.__name__} wrong value"
+            return f"wrong value"
         except IndexError:
-            return f"{func.__name__} wrong index"
+            return f"wrong index"
         except TypeError:
-            return f"{func.__name__} wrong data types. enter numeric"
+            return f"wrong data types. enter numeric"
     return inner
 
 
@@ -29,28 +29,19 @@ def main() -> None:
     """
     while True:
         result = parser(input('wait command: ').lower().strip())
-        #0 - command
-        #1 - text
-        if result[0] == 'break':
-            if len(result) > 1:
-                print(result[1])
+        if result == 'exit':
+            print('Good bye!')
             break
-        elif result[0] == 'print':
-            for iter in ADRESS_BOOK.data.keys():
-                print(f'{iter}:{ADRESS_BOOK.data.get(iter).show_rec()}')
-
-        if len(result) > 1:
-            print(result[1])
+        else:
+            print(result)
 
 
-def parser(user_in: str) -> list:
+def parser(user_in: str) -> str:
     """analiz user input
-
     Args:
         user_in (str): user input
-
     Returns:
-        list: 0 - command to while 1 - text for print
+        str: text for print
     """
     unk_com = True
     for iter in OPERATIONS.keys():
@@ -58,65 +49,76 @@ def parser(user_in: str) -> list:
             unk_com = False
             return get_handler(iter)(user_in)
     if unk_com:
-        return ['', 'I don\'t undestand you']
+        return 'I don\'t undestand you'
 
 
 @input_error
-def todo_add(user_in: str) -> list:
+def todo_add(user_in: str) -> str:
     """add new contact
     """
     result = user_in.split(' ')
     if len(result) < 3:
-        return ['', 'you need use \' \' to separate']
-    record = AB.Record(result[1])
+        return 'you need use \' \' to separate'
+    record = Record(result[1])
     record.phone_add(result[2])
     ADRESS_BOOK.record_add(record)
-    return ['', 'Added']
+    return 'Added'
 
 
 @input_error
-def todo_change(user_in: str) -> list:
+def todo_change(user_in: str) -> str:
     """change phone finded by name
     """
     result = user_in.split(' ')
-    if len(result) < 3:
-        return ['', 'you need use \' \' to separate']
-    record = ADRESS_BOOK.record_find(result[1])
-    if record == None:
-        return ['', f'can\'t find rec with name {result[1]}']
-    record.phone_change(result[2])
+    if len(result) < 4:
+        return 'you need use \' \' to separate'
 
-    return ['', 'Changed']
+    record = ADRESS_BOOK.record_find(result[1])
+    if record is None:
+        return f'can\'t find rec with name {result[1]}'
+    record.phone_change(result[2], result[3])
+
+    return 'Changed'
 
 
 @input_error
-def todo_delete(user_in: str) -> list:
-    """delete phone finded by name
-    """
+def todo_delete_rec(user_in: str) -> str:
     result = user_in.split(' ')
-    if len(result) < 2:
-        return ['', 'you need use \' \' to separate']
-    record = ADRESS_BOOK.record_find(result[1])
-    if record == None:
-        return ['', f'can\'t find rec with name {result[1]}']
-    record.phone_delete()
+    if len(result) < 3:
+        return 'you need use \' \' to separate'
 
-    return ['', 'Deleted']
+    record = ADRESS_BOOK.record_find(result[2])
+    if record is None:
+        return f'can\'t find rec with name {result[2]}'
+    ADRESS_BOOK.record_delete(result[2])
 
-
-def todo_hello(user_in: str) -> list:
-    return ['', 'How can I help you?']
+    return 'deleted record'
 
 
-def todo_exit(user_in: str) -> list:
-    return ['break', 'Good bye!']
+@input_error
+def todo_delete_phone(user_in: str) -> str:
+    result = user_in.split(' ')
+    if len(result) < 4:
+        return 'you need use \' \' to separate'
+
+    record = ADRESS_BOOK.record_find(result[2])
+    if record is None:
+        return f'can\'t find rec with name {result[2]}'
+    record.phone_delete(result[3])
+
+    return 'deleted phone'
 
 
-def todo_show(user_in: str) -> list:
-    if len(ADRESS_BOOK.data):
-        return ['print', 'end of adress book']
-    else:
-        return ['print', 'adress book is empty']
+def todo_hello(user_in: str) -> str:
+    return 'How can I help you?'
+
+
+def todo_exit(user_in: str) -> str:
+    return 'exit'
+
+
+def todo_show(user_in: str) -> str:
+    return ADRESS_BOOK.print_AB()
 
 
 @input_error
@@ -125,8 +127,12 @@ def todo_phone(user_in: str) -> str:
     """
     result = user_in.split(' ')
     if len(result) < 2:
-        return ['', 'you need use \' \' to separate']
-    return ['', ADRESS_BOOK.record_find(result[1]).show_rec()]
+        return 'you need use \' \' to separate'
+    record = ADRESS_BOOK.record_find(result[1])
+    if record is None:
+        return f'can\'t find rec with name {result[1]}'
+
+    return f'{record.name.value} \nphone: {record.show_rec()}'
 
 
 OPERATIONS = {
@@ -138,7 +144,8 @@ OPERATIONS = {
     'good bye': todo_exit,
     'close': todo_exit,
     'show all': todo_show,
-    'delete': todo_delete
+    'delete id': todo_delete_rec,
+    'delete phone': todo_delete_phone,
 }
 
 if __name__ == '__main__':
