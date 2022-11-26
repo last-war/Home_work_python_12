@@ -1,3 +1,4 @@
+from datetime import datetime
 from collections import UserDict
 
 
@@ -17,21 +18,47 @@ class AddressBook(UserDict):
         return None
 
     def print_AB(self):
+        # TODO
         res_str = ''
         for rec_key in self.data:
             rec = self.data.get(rec_key)
-            res_str += f'{rec.name.value} \nphone: {rec.show_rec()}'
+            res_str += f'{str(rec.name)}:{rec.name.value} \nphone: {rec.show_rec()}'
         return res_str
 
     def record_delete(self, key):
         del self.data[key]
+
+    def iterator(self, rec_num=3):
+        res_str = ''
+        iter = 0
+
+        for record in self.data.values():
+            res_str += f'{record.show_rec()}/n'
+            iter += 1
+
+            if iter == rec_num:
+                yield res_rec
+                res_rec = ''
+                iter = 0
+
+        if res_rec:
+            yield res_rec
 
 
 class Record:
 
     def __init__(self, value):
         self.name = Name(value)
-        self.phones = []  # чому так?
+        self.phones = []
+        self.birthday = None
+
+    def birthday_add(self, value):
+        self.birthday = Birthday(value)
+
+    def day_to_birthday(self):
+        if not self.birthday:
+            raise ValueError('contact haven\'t birthday info')
+        return (self.birthday.value - datetime.today()).days
 
     def phone_add(self, value):
         self.phones.append(Phone(value))
@@ -58,6 +85,8 @@ class Record:
         res_str = ''
         for iter in self.phones:
             res_str += f'\n{iter.value}'
+        if self.birthday:
+            res_str += f'\n{str(self.birthday)}:{self.birthday.value}'
         return res_str
 
 
@@ -67,6 +96,9 @@ class Field:
     def __init__(self, value):
         self._value = None
         self.value = value
+
+    def __str__(self) -> str:
+        return f'{self.field_description}'
 
     @property
     def value(self):
@@ -100,3 +132,14 @@ class Name(Field):
         if value.isnumeric():
             raise KeyError('Wrong Name.')
         self._value = value
+
+
+class Birthday(Field):
+    field_description = "Birthday"
+
+    @Field.value.setter
+    def value(self, value):
+        try:
+            self._value = datetime.strptime(value, '%Y-%m-%d').date()
+        except:
+            raise ValueError("Birthday must be format YYYY-m-d")

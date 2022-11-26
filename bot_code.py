@@ -66,6 +66,29 @@ def cmd_add(user_in: str) -> str:
 
 
 @input_error
+def cmd_birthday_add(user_in: str) -> str:
+    """add birthday to contact
+    """
+    result = user_in.split(' ')
+    if len(result) < 3:
+        return 'you need use \' \' to separate'
+    record = ADRESS_BOOK.record_find(result[1])
+    record.birthday_add(result[2])
+    return 'Added birthday'
+
+
+@input_error
+def cmd_birthday_day(user_in: str) -> str:
+    """calc day to birthday of contact
+    """
+    result = user_in.split(' ')
+    if len(result) < 2:
+        return 'you need use \' \' to separate'
+    record = ADRESS_BOOK.record_find(result[1])
+    return record.day_to_birthday()
+
+
+@input_error
 def cmd_change(user_in: str) -> str:
     """change phone finded by name
     """
@@ -137,6 +160,8 @@ def cmd_phone(user_in: str) -> str:
 
 OPERATIONS = {
     'add': cmd_add,
+    'birthday': cmd_birthday_add,
+    'conglatulation': cmd_birthday_day,
     'change': cmd_change,
     'phone': cmd_phone,
     'hello': cmd_hello,
