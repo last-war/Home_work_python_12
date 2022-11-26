@@ -15,8 +15,8 @@ def input_error(func) -> str:
             return func(*args, **kwargs)
         except KeyError:
             return f"wrong name of contact"
-        except ValueError:
-            return f"wrong value"
+        except ValueError as exception:
+            return exception.args[0]
         except IndexError:
             return f"wrong index"
         except TypeError:

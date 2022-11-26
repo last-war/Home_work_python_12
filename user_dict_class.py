@@ -1,5 +1,5 @@
-from datetime import datetime
 from collections import UserDict
+from datetime import datetime
 
 
 class AddressBook(UserDict):
@@ -18,31 +18,35 @@ class AddressBook(UserDict):
         return None
 
     def print_AB(self):
-        # TODO
         res_str = ''
-        for rec_key in self.data:
-            rec = self.data.get(rec_key)
-            res_str += f'{str(rec.name)}:{rec.name.value} \nphone: {rec.show_rec()}'
+        cur_page = 1
+
+        for rec_on_page in self.iterator(2):
+            res_str += f' __PAGE:{cur_page}__  \n'
+            cur_page += 1
+            for rec in rec_on_page:
+                res_str += f'{str(rec.name)}:{rec.name.value} \nphone: {rec.show_rec()}\n'
+            res_str += f'_________\n'
         return res_str
 
     def record_delete(self, key):
         del self.data[key]
 
-    def iterator(self, rec_num=3):
-        res_str = ''
+    def iterator(self, len_list=3):
+        result = []
         iter = 0
 
         for record in self.data.values():
-            res_str += f'{record.show_rec()}/n'
+            result.append(record)
             iter += 1
 
-            if iter == rec_num:
-                yield res_rec
-                res_rec = ''
+            if iter == len_list:
+                yield result
+                result = []
                 iter = 0
 
-        if res_rec:
-            yield res_rec
+        if result:
+            yield result
 
 
 class Record:
@@ -58,7 +62,11 @@ class Record:
     def day_to_birthday(self):
         if not self.birthday:
             raise ValueError('contact haven\'t birthday info')
-        return (self.birthday.value - datetime.today()).days
+        shift = (datetime(datetime.today().year, self.birthday.value.month,
+                 self.birthday.value.day).date() - datetime.today().date()).days
+        if shift < 0:
+            return (datetime(datetime.today().year+1, self.birthday.value.month, self.birthday.value.day).date() - datetime.today().date()).days
+        return shift
 
     def phone_add(self, value):
         self.phones.append(Phone(value))
