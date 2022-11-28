@@ -74,14 +74,14 @@ class Record:
     def phone_change(self, value_old, value_new):
         try:
             self.phones.remove(self.phone_find(value_old))
-        except:
+        except ValueError:
             raise ValueError('Wrong old phone')
         self.phones.append(Phone(value_new))
 
     def phone_delete(self, value):
         try:
             self.phones.remove(self.phone_find(value))
-        except:
+        except ValueError:
             raise ValueError('Wrong old phone')
 
     def phone_find(self, key: str):
@@ -128,7 +128,7 @@ class Phone(Field):
                  .replace("-", "")
                  .replace(" ", ""))
         if not value.isnumeric():
-            raise TypeError('Wrong phones.')
+            raise ValueError('Wrong phones.')
         self._value = value
 
 
@@ -138,7 +138,7 @@ class Name(Field):
     @Field.value.setter
     def value(self, value: str):
         if value.isnumeric():
-            raise KeyError('Wrong Name.')
+            raise ValueError('Wrong Name.')
         self._value = value
 
 
@@ -149,5 +149,5 @@ class Birthday(Field):
     def value(self, value):
         try:
             self._value = datetime.strptime(value, '%Y-%m-%d').date()
-        except:
+        except ValueError:
             raise ValueError("Birthday must be format YYYY-m-d")
