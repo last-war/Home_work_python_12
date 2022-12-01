@@ -1,9 +1,20 @@
 from collections import UserDict
 from datetime import datetime
+import pickle
 
 
 class AddressBook(UserDict):
 
+    def save_to_file(self):
+        with open(self.filename, "wb") as file:
+            pickle.dump(self, file)
+
+    def read_from_file(self):
+        with open(self.filename, "rb") as file:
+            content = pickle.load(file)
+        return content
+
+    
     def record_add(self, cur_rec):
 
         old_rec = self.record_find(cur_rec.name.value)
