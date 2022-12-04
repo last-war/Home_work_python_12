@@ -4,17 +4,34 @@ import pickle
 
 
 class AddressBook(UserDict):
+    filename = 'AddressBook.bin'
 
     def save_to_file(self):
         with open(self.filename, "wb") as file:
             pickle.dump(self, file)
 
     def read_from_file(self):
-        with open(self.filename, "rb") as file:
-            content = pickle.load(file)
+        try:
+            with open(self.filename, "rb") as file:
+                content = pickle.load(file)
+        except FileNotFoundError:
+            return self
         return content
 
-    
+    def str_find(self, key):
+        result = ''
+        # find in names
+        for record in self.data.keys():
+            if key in record:
+                result += record.show_rec()
+            # find in phones
+            rec_res = record.str_find(key)
+            if not rec_res is None:
+                result += rec_res.show_rec()
+        if result == '':
+            result = 'none finded'
+        return result
+
     def record_add(self, cur_rec):
 
         old_rec = self.record_find(cur_rec.name.value)
@@ -99,6 +116,11 @@ class Record:
         for phone in self.phones:
             if phone.value == key:
                 return phone
+
+    def str_find(self, key: str):
+        for phone in self.phones:
+            if key in phone.value:
+                return self
 
     def show_rec(self):
         res_str = ''

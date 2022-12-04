@@ -27,6 +27,7 @@ def input_error(func) -> str:
 def main() -> None:
     """all input-output block
     """
+    ADRESS_BOOK = AddressBook().read_from_file()
     while True:
         result = parser(input('wait command: ').lower().strip())
         if result == 'exit':
@@ -136,7 +137,18 @@ def cmd_hello(user_in: str) -> str:
     return 'How can I help you?'
 
 
+@input_error
+def cmd_find(user_in: str) -> str:
+    """find contact of phone
+    """
+    result = user_in.split(' ')
+    if len(result) < 2:
+        return 'you need use \' \' to separate'
+    return ADRESS_BOOK.str_find(result[1])
+
+
 def cmd_exit(user_in: str) -> str:
+    ADRESS_BOOK.save_to_file()
     return 'exit'
 
 
@@ -161,16 +173,17 @@ def cmd_phone(user_in: str) -> str:
 OPERATIONS = {
     'add': cmd_add,
     'birthday': cmd_birthday_add,
-    'conglatulation': cmd_birthday_day,
     'change': cmd_change,
-    'phone': cmd_phone,
-    'hello': cmd_hello,
-    'exit': cmd_exit,
-    'good bye': cmd_exit,
+    'conglatulation': cmd_birthday_day,
     'close': cmd_exit,
-    'show all': cmd_show,
     'delete id': cmd_delete_rec,
     'delete phone': cmd_delete_phone,
+    'exit': cmd_exit,
+    'find': cmd_find,
+    'good bye': cmd_exit,
+    'hello': cmd_hello,
+    'phone': cmd_phone,
+    'show all': cmd_show,
 }
 
 if __name__ == '__main__':
