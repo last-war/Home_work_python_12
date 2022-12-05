@@ -23,11 +23,12 @@ class AddressBook(UserDict):
         # find in names
         for record in self.data.keys():
             if key in record:
-                result += record.show_rec()
+                finded_rec = self.data.get(record)
+                result += f'{str(finded_rec.name)}:{finded_rec.name.value} \nphone: {finded_rec.show_rec()}\n'
             # find in phones
-            rec_res = record.str_find(key)
+            rec_res = self.data.get(record).str_find(key)
             if not rec_res is None:
-                result += rec_res.show_rec()
+                result += f'{str(rec_res.name)}:{rec_res.name.value} \nphone: {rec_res.show_rec()}\n'
         if result == '':
             result = 'none finded'
         return result

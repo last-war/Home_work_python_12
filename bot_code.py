@@ -1,6 +1,6 @@
 from user_dict_class import Record, AddressBook
 
-ADRESS_BOOK = AddressBook()
+ADRESS_BOOK = AddressBook().read_from_file()
 
 
 def get_handler(operator: str):
@@ -27,7 +27,7 @@ def input_error(func) -> str:
 def main() -> None:
     """all input-output block
     """
-    ADRESS_BOOK = AddressBook().read_from_file()
+
     while True:
         result = parser(input('wait command: ').lower().strip())
         if result == 'exit':
